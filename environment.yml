@@ -1,0 +1,9 @@
+name: homework
+channels:
+  - conda-forge
+dependencies:
+  - python
+  - numpy
+  - numba
+  - scipy
+  - sympy
