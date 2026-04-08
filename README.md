@@ -46,7 +46,7 @@ This directory contains the full definition of four different CISM model spaces 
 
 - `sd-shell/`: six valence orbitals outside of an $^{16}$O core
 - `fp-shell/`: ten valence orbitals outside of an $^{40}$Ca core 
-- `rare-earth/`: fourteen valence orbitals outside of an $^{120}$Sm core 
+- `rare-earth/`: fourteen valence orbitals outside of an $^{120}$Sn core 
 - `actinides/`: fifteen valence orbitals outside of an $^{208}$Pb core
 
 Each subfolder contains 
