@@ -1,6 +1,6 @@
 # An introduction to nuclear mean-field calculations
 
-The code in this repository accompanies the numerical homework for the course "Advanced Nuclear Theory", taught by Dr. W. Ryssens in 2025-2026. Students will build a simple Hartree-Fock solver for use in Configuration Interaction Shell Model (CISM) spaces based on ingredients provided in this repository. They will use the resulting code to answer several questions in the full statement of the assignment. 
+The code in this repository accompanies the numerical homework for the course "Theoretical Nuclear Physics", taught by Dr. W. Ryssens in 2025-2026. Students will build a simple Hartree-Fock solver for use in Configuration Interaction Shell Model (CISM) spaces based on ingredients provided in this repository. They will use the resulting code to answer several questions in the full statement of the assignment. 
 
 ## Contents 
 
@@ -55,9 +55,9 @@ Each subfolder contains
 - `r2.red`: reduced matrix elements of $r^2$ in the model space
 - `*.int*`: the specification of the Hamiltonian, i.e. its single-particle energies and two-body matrix elements.
 
-## Code ingredients: the ```solver/``` directory
+## Code ingredients: the ```solver/``` package
 
-This directory contains several Python modules; in order of importance to this assignment: 
+The `solver/` directory contains several Python modules; in order of importance to this assignment: 
 
 - `slater_determinant.py`: the implementation of the `SlaterDeterminant` class
 - `modelspace.py`: the implementation of the `SingleParticleBasis` class.
@@ -68,6 +68,13 @@ This directory contains several Python modules; in order of importance to this a
 The latter two modules -- `tbme.py` and `angmomcoupling.py` -- are mostly technical, understanding them is not crucial to this assignment which is why they are not documented in detail here. Nevertheless the reader might be interested in taking a look at these modules.
 
 This is not true for the other three modules: these contain the ingredients you will need for the assignment. Nevertheless, not ALL of their attributes/methods/details are important to you in practice. Below, I provide documentation for the most important aspects; you can safely assume that the things this files does not cover are of secondary importance to you.
+
+All of the code in `solver/` is accessible as a Python package; i.e.~you can access all methods with import statements such as
+
+```python 
+from solver import Hamiltonian, SingleParticleBasis, SlaterDeterminant
+```
+
 
 ### 1. `SingleParticleBasis` Class from the `modelspace.py` file
 
@@ -170,7 +177,7 @@ The `SlaterDeterminant` class represents a Slater determinant many-body state in
 
 **Example Usage:**
 ```python
-basis       = build_model_space("data/sd-shell/pn.sps", "data/sd-shell/r2.red")
-hamiltonian = Hamiltonian(basis, "data/sd-shell/sd-shell.int")
-sd = SlaterDeterminant(basis, H.SPE, 4, 4)
+basis = build_model_space("data/sd-shell/pn.sps", "data/sd-shell/r2.red")
+H     = Hamiltonian(basis, "data/sd-shell/sd-shell.int")
+sd    = SlaterDeterminant(basis, H.SPE, 4, 4)
 ```

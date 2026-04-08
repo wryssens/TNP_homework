@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-from modelspace import SingleParticleBasis, J_coupling
+from .modelspace import SingleParticleBasis, J_coupling
 import numpy as np
-from angmomcoupling import clebsch
-from tbme import TBME
+from .angmomcoupling import clebsch
+from .tbme import TBME
 
 class Hamiltonian:
     """

@@ -1,5 +1,5 @@
 import numpy as np
-from angmomcoupling import wigner
+from .angmomcoupling import wigner
 
 class SingleParticleBasis:
     """
