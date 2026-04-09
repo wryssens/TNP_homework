@@ -7,7 +7,7 @@ The code in this repository accompanies the numerical homework for the course "T
 - ```README.md ```       : this file with information on the code ingredients provided
 - ```environment.yml ``` : environment file to help you satisfy the code's requirements.
 - ```assignment.pdf ```  : a copy of the assignment featuring more information on the physics
-- ```data/```            : datafiles defining single-particle modelspaces and corresponding Hamiltonians.
+- ```data/```            : datafiles defining single particle bases and corresponding Hamiltonians.
 - ```solver/```          : Python modules with ingredients for building a Hartree-Fock solver.
 
 ## Code requirements & environment.yml
@@ -40,9 +40,9 @@ The code in this repository accompanies the numerical homework for the course "T
   If you do not use conda, you should guarantee the availability of these modules yourself. 
 
 
-## Model spaces and Hamiltonians: the ```data/``` directory
+## Single particle bases and Hamiltonians: the ```data/``` directory
 
-This directory contains the full definition of four different CISM model spaces and associated Hamiltonians. More specifically, these are 
+This directory contains the full definition of four different CISM single particle bases and associated Hamiltonians. More specifically, these are 
 
 - `sd-shell/`: six valence orbitals outside of an $^{16}$O core
 - `fp-shell/`: ten valence orbitals outside of an $^{40}$Ca core 
@@ -52,7 +52,7 @@ This directory contains the full definition of four different CISM model spaces 
 Each subfolder contains 
 
 - `pn.sps`: the specification of the valence orbitals
-- `r2.red`: reduced matrix elements of $r^2$ in the model space
+- `r2.red`: reduced matrix elements of $r^2$y
 - `*.int*`: the specification of the Hamiltonian, i.e. its single-particle energies and two-body matrix elements.
 
 ## Code ingredients: the ```solver/``` package
@@ -60,7 +60,7 @@ Each subfolder contains
 The `solver/` directory contains several Python modules; in order of importance to this assignment: 
 
 - `slater_determinant.py`: the implementation of the `SlaterDeterminant` class
-- `modelspace.py`: the implementation of the `SingleParticleBasis` class.
+- `singleparticlebasis.py`: the implementation of the `SingleParticleBasis` class.
 - `hamiltonian.py`: the implementation of the `Hamiltonian` class
 - `tbme.py` : the `TBME` class to deal efficiently with two-body matrix elements.
 - `angmomcoupling.py`: some utility functions for angular momentum coupling.
@@ -76,9 +76,9 @@ from solver import Hamiltonian, SingleParticleBasis, SlaterDeterminant
 ```
 
 
-### 1. `SingleParticleBasis` Class from the `modelspace.py` file
+### 1. `SingleParticleBasis` Class from the `singleparticlebasis.py` file
 
-The `SingleParticleBasis` class represents the computational basis for nuclear shell model calculations. It stores all relevant information about all the single-particle states in a given model space. In particular, it has the following key attributes 
+The `SingleParticleBasis` class represents the computational basis for nuclear shell model calculations and stores all relevant information about all the single particle states. In particular, it has the following key attributes 
 
 **Key Attributes**
 
@@ -89,7 +89,7 @@ The `SingleParticleBasis` class represents the computational basis for nuclear s
     - `two_m` : twice the magnetic quantum number $m$)
     - `isospin`: the projection of isospin, $t_z = +1/-1$ for proton/neutron)
     - `parity` : the parity quantum number $P = \pm 1$
-- single-particle matrix elements of $Q_{20}$
+- `Q20`: array containing the single-particle matrix elements of $Q_{20}$
 
 Other attributes are more technical and less crucial to finishing this assignment: blocks of single-particle states grouped by quantum numbers and blocks of two-body states grouped by quantum numbers.
 
@@ -97,13 +97,13 @@ The class provides you with several useful methods
 
 **Key Methods:**
 
-- `size`: return the total number of single-particle states in the model space
-- `build_model_space(filename, r2_filename)`: returns a SingleParticleBasis object based on a `.sps` file and an associated `r2.red` file.
-- `__str__` : returns a string representation of the class such that you can call `print(modelspace)`
+- `size`: return the total number of single-particle states in the single particle basis.
+- `build_single_particle_basis(filename, r2_filename)`: returns a `SingleParticleBasis` object based on a `.sps` file and an associated `r2.red` file.
+- `__str__` : returns a string representation of the class such that you can call `print(basis)`
 
 **Example Usage:**
 ```python
-basis = build_model_space("data/sd-shell/pn.sps", "data/sd-shell/r2.red")
+basis = build_single_particle_basis("data/sd-shell/pn.sps", "data/sd-shell/r2.red")
 print(basis)
 ```
 
@@ -124,11 +124,10 @@ The `Hamiltonian` class stores all information for the evaluation of a generic t
 
 **Example Usage:**
 ```python
-basis = build_model_space("data/sd-shell/pn.sps", "data/sd-shell/r2.red")
+basis = build_single_particle_basis("data/sd-shell/pn.sps", "data/sd-shell/r2.red")
 H = Hamiltonian(basis, 'data/sd-shell/sd-shell.int')
 print(H)
 ```
-
 
 ### 3. `SlaterDeterminant` Class from the `slater_determinant.py` file
 
@@ -177,7 +176,7 @@ The `SlaterDeterminant` class represents a Slater determinant many-body state in
 
 **Example Usage:**
 ```python
-basis = build_model_space("data/sd-shell/pn.sps", "data/sd-shell/r2.red")
+basis = build_single_particle_basis("data/sd-shell/pn.sps", "data/sd-shell/r2.red")
 H     = Hamiltonian(basis, "data/sd-shell/sd-shell.int")
 sd    = SlaterDeterminant(basis, H.SPE, 4, 4)
 ```

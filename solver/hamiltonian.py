@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from .modelspace import SingleParticleBasis, J_coupling
+from .singleparticlebasis import SingleParticleBasis, J_coupling
 import numpy as np
 from .angmomcoupling import clebsch
 from .tbme import TBME
@@ -19,7 +19,7 @@ class Hamiltonian:
        - \bar{v}_{\mu \nu \kappa \lambda} are antisymmetrized two-body matrix elements (TBMEs).
     
     Attributes:
-        basis (SingleParticleBasis): The single-particle basis defining the model space
+        basis (SingleParticleBasis): The single-particle basis
         SPE (numpy.ndarray)        : Single-particle energies for each basis state
         TBME (TBME)                : Container for antisymmetrized two-body matrix elements
     

@@ -492,9 +492,9 @@ def generate_m_substates(n, l, two_j, isospin, orbit, timereversal=False):
 
     return n_arr, l_arr, j_arr, two_m, iso_arr, parity_arr, orbit_map
 
-def build_model_space(filename, r2_filename, timereversal=False ):
+def build_single_particle_basis(filename, r2_filename, timereversal=False ):
      """
-     Build a complete single-particle basis from a model space definition file.
+     Build a complete single-particle basis from a single-particle basis definition file.
      
      Reads orbital definitions from a file and generates all magnetic substates
      to create a complete single-particle basis for nuclear shell model calculations.
@@ -528,7 +528,7 @@ def build_model_space(filename, r2_filename, timereversal=False ):
          - If r2_filename is None, quadrupole matrix elements are not built.
      
      Example:
-         >>> basis = build_model_space("modelspace_def.txt", "r2_elements.txt", timereversal=False)
+         >>> basis = build_single_particle_basis("singleparticlebasis_def.txt", "r2_elements.txt", timereversal=False)
          >>> print(f"Created basis with {basis.size} states")
          >>> print(f"Protons: {np.sum(basis.isospin == 1)}, Neutrons: {np.sum(basis.isospin == -1)}")
      """

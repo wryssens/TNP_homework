@@ -75,7 +75,7 @@ class SlaterDeterminant:
             - Density matrix construction from occupations
         
         Example:
-            >>> basis = build_model_space("basis_def.txt", None)
+            >>> basis = build_single_particle_basis("basis_def.txt", None)
             >>> initial_energies = np.random.rand(basis.size)
             >>> sd = SlaterDeterminant(basis, initial_energies, 4, 4)
             >>> print(f"Created Slater determinant with {sd.particle_number()} particles")
