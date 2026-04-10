@@ -43,6 +43,7 @@ class SlaterDeterminant:
         __init__(basis, hf_energies, N_valence, Z_valence): Initialize Slater determinant
         diagonalize(): Diagonalize single-particle Hamiltonian with symmetry constraints
         calculate_energy(H): Calculate total energy
+        calculate_quadrupole_expectation() : Calculate the expectation value of Q20
         particle_number(): Calculate total particle number
         neutron_number(): Calculate neutron number
         proton_number(): Calculate proton number
@@ -53,20 +54,28 @@ class SlaterDeterminant:
         print_hf_basis(): Print HF basis information
     """
     
-    def __init__(self, basis, hf_energies: np.ndarray, N_valence: int, Z_valence: int):
+    def __init__(self, basis, hf_energies: np.ndarray, N_valence: int, Z_valence: int, shape: str):
         """
         Initialize a Slater determinant.
 
         Careful: the initialisation builds a Slater determinant by occupying the lowest-lying
                  single-particle states in the computational basis. "Lowest-lying" is defined
-                 by the ordering of the hf_energies array passed in!
+                 by the ordering of the hf_energies passed with a (small) added tweak!
+
+                     \epsilon_{\mu} = hf_energies[\mu] +/- 0.1 * | m_\mu |
+
+                 where
+                    - |m_{\mu}| is the absolute value of the projection of the angular momentum
+                    - the sign of the small tweak is positive for prolate shapes and negative
+                      for oblate shapes.
 
         Parameters:
             basis (SingleParticleBasis): Single-particle basis object
             hf_energies (np.ndarray): Initial guess for Hartree-Fock single-particle energies
             N_valence (int): Number of valence neutrons to occupy
             Z_valence (int): Number of valence protons to occupy
-        
+            shape(str)     : The type of shape to initialize
+
         Initializes:
             - Zero mean-field and Hamiltonian matrices
             - Identity HF basis transformation
@@ -77,11 +86,26 @@ class SlaterDeterminant:
         Example:
             >>> basis = build_single_particle_basis("basis_def.txt", None)
             >>> initial_energies = np.random.rand(basis.size)
-            >>> sd = SlaterDeterminant(basis, initial_energies, 4, 4)
+            >>> sd = SlaterDeterminant(basis, initial_energies, 4, 4, 'oblate')
             >>> print(f"Created Slater determinant with {sd.particle_number()} particles")
         """
         self.basis           = basis
-        self.hf_sp_energies  = hf_energies
+
+        # Apply shape deformation to the energies
+        if shape == 'prolate':
+            sign = +1
+        elif shape == 'oblate':
+            sign = -1
+        elif shape == 'spherical':
+            sign = 0
+        else:
+            raise ValueError(f"Unknown shape: {shape}")
+
+        changed_energies = np.zeros(basis.size)
+        for i in range(basis.size):
+            changed_energies[i] = hf_energies[i] + 0.05 * sign * np.abs(basis.two_m[i])
+
+        self.hf_sp_energies  = changed_energies
         self.N_valence       = N_valence
         self.Z_valence       = Z_valence
 
@@ -428,6 +452,34 @@ class SlaterDeterminant:
         if self.hf_quantum_numbers is None:
             return []
         return self.hf_quantum_numbers
+
+    def calculate_quadrupole_expectation(self) -> float:
+        """
+        Calculate the expectation value of the quadrupole operator Q20.
+
+        Computes <Q20> = Tr(rho * Q20) where Q20 is the quadrupole operator
+        matrix in the computational basis.
+
+        Returns:
+            float: Expectation value <Q20> in units appropriate for the basis
+
+        Notes:
+            - Requires that the basis has quadrupole matrix elements computed
+              (via build_quadrupole_matrix_elements)
+            - Returns 0.0 if quadrupole matrix elements are not available
+            - The quadrupole operator is defined as Q20 = r^2 * Y20
+
+        Example:
+            >>> q20_exp = sd.calculate_quadrupole_expectation()
+            >>> print(f"<Q20> = {q20_exp:.4f}")
+            >>> if abs(q20_exp) > 1e-6:
+            ...     print(f"Non-zero quadrupole moment detected")
+        """
+
+        # Calculate expectation value: <Q20> = Tr(rho * Q20)
+        q20_expectation = np.trace(self.rho @ self.basis.Q20)
+
+        return q20_expectation
 
     def print_hf_basis(self):
         """
