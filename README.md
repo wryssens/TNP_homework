@@ -154,11 +154,15 @@ The `SlaterDeterminant` class represents a Slater determinant many-body state in
    - `__init__(basis, hf_energies, N_valence, Z_valence, shape)`: Initialize a Slater Determinant with
        - `N/Z_valence` neutrons/protons 
        - a trivial HF transformation, i.e. the HF basis is equal to the computational basis 
-       - the specified set of single-particle energies `hf_energies` 
-       - ... but **offset** by a small energy shift based on `shape`. 
-         If set to `prolate`, the single-particle energies with high |m| will be (slightly) disfavoured.
-         If set to `oblate`, the single-particle energies with low |m| will be (slightly) disfavoured.
-       - occupation factors set in such a way that the *lowest-lying** single-particle states are occupied  
+       - the specified set of single-particle energies `hf_energies` **modified** based on `shape`
+           - `shape = prolate`  : the single-particle energies with high |m| will be disfavoured.
+           - `shape = oblate`   : the single-particle energies with low |m| will be disfavoured.
+           - `shape = spherical`: no modification of `hf_energies`.
+         
+       - **NOTE**: `prolate' and `oblate' will lead reliably to configurations of the corresponding shape. 
+         `spherical' however will **not**; a perfectly spherical HF initialisation is only possible for valence neutron and proton number both corresponding to a closed shell.
+             
+       - occupation factors set in such a way that the *lowest-lying** single-particle states are occupied
    - `set_occupations()`: Set occupation numbers to occupy the *lowest-lying* states as decided by the attribute `hf_sp_energies`
 
 2. **Hartree-Fock Calculations:**

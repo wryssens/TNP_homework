@@ -62,12 +62,18 @@ class SlaterDeterminant:
                  single-particle states in the computational basis. "Lowest-lying" is defined
                  by the ordering of the hf_energies passed with a (small) added tweak!
 
-                     \epsilon_{\mu} = hf_energies[\mu] +/- 0.1 * | m_\mu |
+                     \epsilon_{\mu} = hf_energies[\mu] + a * | m_\mu |
 
                  where
                     - |m_{\mu}| is the absolute value of the projection of the angular momentum
-                    - the sign of the small tweak is positive for prolate shapes and negative
-                      for oblate shapes.
+                    - the parameter a is
+                          * +1 for prolate shapes.
+                          * -1 for oblate shapes.
+                          -  0 for spherical shapes.
+
+        Note that "spherical" initialisation is NOT GUARANTEED to result in a spherical configuration;
+         this will only be the case for nuclei whose neutron and proton number both correspond to
+         a closed shell.
 
         Parameters:
             basis (SingleParticleBasis): Single-particle basis object
@@ -103,7 +109,7 @@ class SlaterDeterminant:
 
         changed_energies = np.zeros(basis.size)
         for i in range(basis.size):
-            changed_energies[i] = hf_energies[i] + 0.05 * sign * np.abs(basis.two_m[i])
+            changed_energies[i] = hf_energies[i] +  sign * np.abs(basis.two_m[i])
 
         self.hf_sp_energies  = changed_energies
         self.N_valence       = N_valence
